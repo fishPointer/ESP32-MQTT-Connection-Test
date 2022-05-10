@@ -5,6 +5,7 @@
 const char *SSID = "Breath of the Wifi";
 const char *PWD = "supervolcano55";
 const char *HUTAO = "192.168.0.193";
+const char *TOPIC_CORN = "corn";
 int mqttPort = 1616;
 
 WiFiClient wifiClient;
@@ -32,15 +33,41 @@ void loop() {
 ////////////////////////
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Callback - ");
-  Serial.println(topic);
-  Serial.print("Message:");
+int callbackmode = 0;
 
-  for (int i = 0; i < length; i++) {
-    Serial.print(char(payload[i]));
+if(strcmp(topic, TOPIC_CORN) == 0)
+{
+  callbackmode = 2;
+}
+
+  switch(callbackmode)
+  {
+    case 1:
+      Serial.println("Callback Mode 1");
+      mqttClient.publish("feedback", "AAA");
+      break;
+
+    case 2:
+      Serial.print("Topic detected: ");
+      Serial.println(topic);
+      mqttClient.publish("feedback", topic);
+      break;
+
+    default:
+      Serial.print("Callback - ");
+      Serial.println(topic);
+      Serial.print("Message:");
+
+      for (int i = 0; i < length; i++) 
+      {
+        Serial.print(char(payload[i]));
+      }
+      Serial.println();
+      Serial.println(length);
   }
-  Serial.println();
-  Serial.println(length);
+  
+
+
 }
 
 ////////////////////////
@@ -74,6 +101,7 @@ void reconnect() {
         // subscribe to topic
         mqttClient.subscribe("corn");
         mqttClient.subscribe("potato");
+        //mqttClient.subscribe("feedback");
       }
       
   }
