@@ -50,7 +50,7 @@ if(strcmp(topic, TOPIC_CORN) == 0)
     case 2:
       Serial.print("Topic detected: ");
       Serial.println(topic);
-      mqttClient.publish("feedback", topic);
+      mqttClient.publish("feedback", TOPIC_CORN);
       break;
 
     default:
