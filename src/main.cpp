@@ -7,6 +7,7 @@ const char *PWD = "supervolcano55";
 const char *HUTAO = "192.168.0.193";
 const char *TOPIC_CORN = "corn";
 const char *TOPIC_BOOLY = "booly";
+const char *TOPIC_LUX = "lux";
 int mqttPort = 1616;
 
 WiFiClient wifiClient;
@@ -23,6 +24,7 @@ void setup() {
   Serial.begin(115200);
   connectToWiFi();
   setupMQTT();
+  pinMode(27, OUTPUT);
 }
 
 void loop() {
@@ -60,6 +62,11 @@ if(strcmp(topic, TOPIC_BOOLY) == 0)
   callbackmode = 3;
 }
 
+if(strcmp(topic, TOPIC_LUX) == 0)
+{
+  callbackmode = 4;
+}
+
 //Primary switch statement for different functions by topic
 //Master list
   switch(callbackmode)
@@ -83,6 +90,18 @@ if(strcmp(topic, TOPIC_BOOLY) == 0)
       Serial.print("calc output: ");
       Serial.println(out_msg);
       mqttClient.publish("feedback", out_msg);
+      break;
+
+    case 4:
+      num_payload = str_payload.toInt();
+      if (num_payload == 1)
+      {
+        digitalWrite(27, HIGH);
+      }
+      else
+      {
+        digitalWrite(27, LOW);
+      }
       break;
 
     //Default Functionality, read off message and topic
@@ -132,6 +151,7 @@ void reconnect() {
         mqttClient.subscribe("corn");
         mqttClient.subscribe("potato");
         mqttClient.subscribe("booly");
+        mqttClient.subscribe("lux");
       }
       
   }
